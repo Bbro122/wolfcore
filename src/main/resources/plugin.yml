@@ -1,0 +1,9 @@
+main: demoted.spigot.wolfcore.main
+name: SkyCore
+api-version: '1.20'
+version: 1.0
+commands:
+   wc:
+      description: SkyCore Primary Command
+      usage: /<command>
+      permission: skycore.wc

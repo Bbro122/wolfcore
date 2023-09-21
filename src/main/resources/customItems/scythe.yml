@@ -1,0 +1,7 @@
+material: "IRON_SWORD"
+itemType: "sword"
+customModelData: 1
+defaultLevel: 10
+abilities:
+- ""
+- ""
