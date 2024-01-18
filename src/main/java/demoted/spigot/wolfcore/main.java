@@ -12,6 +12,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import demoted.spigot.wolfcore.commands.Subcommand;
+import demoted.spigot.wolfcore.commands.party;
 import demoted.spigot.wolfcore.commands.wc;
 import demoted.spigot.wolfcore.items.itemDictionary;
 
@@ -20,9 +21,12 @@ import demoted.spigot.wolfcore.items.itemDictionary;
  *
  */
 public class main extends JavaPlugin {
-    public List<Subcommand> commandList;
+    public List<Subcommand> wcList;
+    public List<Subcommand> partyList;
+    public List<Subcommand> dungeonList;
     public File customItems;
     public File customMobs;
+    public File dungeons;
 
     @Override
     public void onEnable() {
@@ -46,11 +50,28 @@ public class main extends JavaPlugin {
         if (!customItems.exists())
             customItems.mkdir();
         this.customItems = customItems;
+        File dungeons = new File(file, "customItems");
+        if (!dungeons.exists())
+            dungeons.mkdir();
+        this.dungeons = dungeons;
         getServer().getPluginManager().registerEvents(new events(this), this);
         getCommand("wc").setTabCompleter(this);
         getCommand("wc").setExecutor(new wc(this));
-
-        commandList = Arrays.asList(
+        getCommand("party").setExecutor(new party(this));
+        wcList = Arrays.asList(
+                new Subcommand("giveitem")
+                        .addStaticOption(itemDictionary.validTypes)
+                        .addStaticOption(utils.intList),
+                new Subcommand("romantest"),
+                new Subcommand("setabilitydata"),
+                new Subcommand("spawnelite")
+                        .addStaticOption(utils.arrayToStringArray(EntityType.values()))
+                        .addStaticOption(utils.intList),
+                new Subcommand("givecustomitem")
+                        .addDynamicOption(() -> {
+                            return utils.listFiles(customItems);
+                        }));
+        partyList = Arrays.asList(
                 new Subcommand("giveitem")
                         .addStaticOption(itemDictionary.validTypes)
                         .addStaticOption(utils.intList),
@@ -75,17 +96,28 @@ public class main extends JavaPlugin {
         if (command.getName().equalsIgnoreCase("wc")) {
             if (args.length == 1) {
                 List<String> ls = new ArrayList<>();
-                for (Subcommand subcommand : commandList) {
+                for (Subcommand subcommand : wcList) {
                     if (subcommand.command.toLowerCase().startsWith(args[0].toLowerCase()))
                         ls.add(subcommand.command);
                 }
                 return ls;
             }
             if (args.length > 1) {
-                for (Subcommand subcommand : commandList) {
+                for (Subcommand subcommand : wcList) {
                     if (subcommand.command.equalsIgnoreCase(args[0]))
                         return subcommand.returnData(args);
                 }
+            }
+        } else if (command.getName().equalsIgnoreCase("party")) {
+
+        } else if (command.getName().equalsIgnoreCase("dungeon")) {
+            if (args.length == 1) {
+                List<String> ls = new ArrayList<>();
+                for (Subcommand subcommand : dungeonList) {
+                    if (subcommand.command.toLowerCase().startsWith(args[0].toLowerCase()))
+                        ls.add(subcommand.command);
+                }
+                return ls;
             }
         }
         return null;

@@ -26,6 +26,7 @@ public class Abilities {
     public static void deathEventAbility(LivingEntity enemy, LivingEntity self, String abilityData) {
         main plugin = main.getPlugin(main.class);
         plugin.getLogger().info(abilityData);
+        if (abilityData == null) return;
         String[] abilities = abilityData.split(",");
         for (String ability : abilities) {
             String[] meta = ability.split(":");
@@ -54,6 +55,7 @@ public class Abilities {
     public static void damageEventAbilityEnemy(LivingEntity enemy, LivingEntity self, String abilityData) {
         main plugin = main.getPlugin(main.class);
         plugin.getLogger().info(abilityData);
+        if (abilityData == null) return;
         String[] abilities = abilityData.split(",");
         for (String ability : abilities) {
             String[] meta = ability.split(":");

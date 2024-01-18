@@ -7,3 +7,11 @@ commands:
       description: SkyCore Primary Command
       usage: /<command>
       permission: skycore.wc
+   party:
+      description: SkyCore Party Command
+      usage: /<command>
+      permission: skycore.party
+   party:
+      description: SkyCore Dungeon Command
+      usage: /<command>
+      permission: skycore.dungeon

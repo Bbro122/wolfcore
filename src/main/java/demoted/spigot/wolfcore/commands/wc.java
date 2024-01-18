@@ -9,6 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +19,7 @@ import org.bukkit.persistence.PersistentDataType;
 import demoted.spigot.wolfcore.main;
 import demoted.spigot.wolfcore.returnValue;
 import demoted.spigot.wolfcore.utils;
+import demoted.spigot.wolfcore.entities.Abilities;
 import demoted.spigot.wolfcore.entities.Elite;
 import demoted.spigot.wolfcore.items.customItem;
 import demoted.spigot.wolfcore.items.itemDictionary;
@@ -37,10 +39,9 @@ public class wc implements CommandExecutor {
                 case "spawnelite": {
                     EntityType type = EntityType.valueOf(utils.stringAllowedValues(args[1].toUpperCase(), "ZOMBIE",
                             utils.arrayToStringArray(EntityType.values())));
-                    new Elite(type, player.getLocation())
-                            .setLevel(utils.parseNumber(args[2], 10))
-                            .addArmor()
+                    LivingEntity entity = new Elite(type, player.getLocation())
                             .createEntity();
+                    Abilities.spawnAbilities(entity);
                 }
                     break;
                 case "giveitem": {
@@ -56,12 +57,16 @@ public class wc implements CommandExecutor {
                         } catch (NumberFormatException e) {
                         }
                     }
-                    ItemStack item = new customItem(type)
+                    customItem item = new customItem(type)
                             .setLevel(level)
                             .setName("§a" + itemDictionary.getName())
-                            .addLevelVariation()
-                            .create(true);
-                    player.getInventory().addItem(item);
+                            .addLevelVariation();
+                    if (type.equalsIgnoreCase(itemDictionary.CLAYMORE)) {
+                        item.setCustomModelData(1);
+                    } else if (type.equalsIgnoreCase(itemDictionary.DAGGER)) {
+                        item.setCustomModelData(2);
+                    }
+                    player.getInventory().addItem(item.create());
                 }
                     break;
                 case "setabilitydata": {
@@ -82,7 +87,7 @@ public class wc implements CommandExecutor {
                     List<String> validFileNames = utils.listFiles(plugin.customItems);
                     player.sendMessage(validFileNames.toString());
                     String fileName = utils.stringAllowedValues(args[1], null, validFileNames);
-                    if (fileName==null) {
+                    if (fileName == null) {
                         player.sendMessage("File defaulted");
                         return false;
                     }
@@ -92,7 +97,8 @@ public class wc implements CommandExecutor {
                     config.addDefault("material", "");
                     player.sendMessage(config.getString("material"));
                     Material mat = Material.getMaterial(config.getString("material").toUpperCase());
-                    String itemType = utils.stringAllowedValues(config.getString("itemType"), itemDictionary.SWORD, itemDictionary.validTypes);
+                    String itemType = utils.stringAllowedValues(config.getString("itemType"), itemDictionary.SWORD,
+                            itemDictionary.validTypes);
                     int customModelData = config.getInt("customModelData");
                     int defaultLevel = config.getInt("defaultLevel");
                     if (mat == null) {
@@ -101,12 +107,12 @@ public class wc implements CommandExecutor {
                     }
                     config.getStringList("abilities");
                     ItemStack item = new customItem(itemType)
-                    .setLevel(defaultLevel)
-                    .setCustomModelData(customModelData)
-                    .setMaterial(mat)
-                    .create(true);
+                            .setLevel(defaultLevel)
+                            .setCustomModelData(customModelData)
+                            .setMaterial(mat)
+                            .create(true);
                     player.getInventory().addItem(item);
-                    
+
                 }
                     break;
                 default:

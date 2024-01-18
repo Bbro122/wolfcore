@@ -123,6 +123,7 @@ public class customItem {
             if (type.equalsIgnoreCase(itemDictionary.DAGGER)) {
                 damage *= 0.75;
                 attackSpeed = 2.4;
+                setCustomModelData(2);
                 addAttribute(meta, Attribute.GENERIC_MOVEMENT_SPEED, 0.0125, EquipmentSlot.HAND);
                 addAttribute(meta, Attribute.GENERIC_ATTACK_SPEED, 0.8, EquipmentSlot.OFF_HAND);
                 container.set(itemDictionary.abilityKey, PersistentDataType.STRING, "daggerpassive");
